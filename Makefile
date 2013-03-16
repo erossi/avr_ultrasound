@@ -14,11 +14,8 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 PRG_NAME = test
-MCU = atmega1284p
-MCU = atmega8
 MCU = atmega328p
 OPTLEV = s
-FCPU = 1000000UL
 FCPU = 16000000UL
 PWD = $(shell pwd)
 INC = -I/usr/lib/avr/include/
@@ -35,6 +32,8 @@ GIT_TAG = "Unknown"
 AR = avr-ar
 CC = avr-gcc
 
+DUDEAPORT = /dev/ttyACM0
+DUDEADEV = arduino
 DUDESPORT = /dev/ttyUSB0
 DUDESDEV = stk500v2
 DUDEUPORT = usb
@@ -48,7 +47,7 @@ SIZE = avr-size --format=avr --mcu=$(MCU) $(PRGNAME).elf
 
 REMOVE = rm -f
 
-objects = uart_isr.o uart.o
+objects = uart.o
 
 .PHONY: clean indent
 .SILENT: help
@@ -61,11 +60,11 @@ all: $(objects)
 	$(CC) $(CFLAGS) -o $(PRGNAME).elf main.c $(objects) $(LFLAGS)
 	$(OBJCOPY) $(PRGNAME).elf $(PRGNAME).hex
 
-uart.o:
-	$(CC) $(CFLAGS) -D TXONLY -c uart.c
-
 debug.o:
 	$(CC) $(CFLAGS) -D GITREL=\"$(GIT_TAG)\" -c debug.c
+
+programardu:
+	$(DUDE) -c $(DUDEADEV) -P $(DUDEAPORT)
 
 programstk:
 	$(DUDE) -c $(DUDESDEV) -P $(DUDESPORT)
