@@ -9,7 +9,7 @@
 
 int main(void)
 {
-	uint16_t i, speed;
+	uint16_t i, distance;
 	char *string;
 
 	PORTC = 0;
@@ -38,13 +38,16 @@ int main(void)
 		 * (i * SCALEuS)/1000000 is the same in seconds.
 		 * 340 is the speed of the sound and
 		 * /2 we need only half of the way.
-		 * The simplyfied formula in mm.
+		 * The simplyfied formula in cm.
+		 * 340 mm/msec = 34cm/msec = 0.029 msec/cm = 29 uS/cm
+		 * dist (cm) = T (uS) / 29 /2.
+		 *
 		 */
-		speed = (i * SCALEuS * 3) /25;
+		distance = i * SCALEuS /58;
 		string = utoa(i, string, 10);
 		uart_printstr(0, string);
 		uart_printstr(0, " ");
-		string = utoa(speed, string, 10);
+		string = utoa(distance, string, 10);
 		uart_printstr(0, string);
 		uart_printstr(0, "\n\r");
 		_delay_ms(100);
