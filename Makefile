@@ -13,7 +13,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-PRG_NAME = test
+PRG_NAME = tzunami
 MCU = atmega328p
 OPTLEV = s
 FCPU = 16000000UL
@@ -47,7 +47,7 @@ SIZE = avr-size --format=avr --mcu=$(MCU) $(PRGNAME).elf
 
 REMOVE = rm -f
 
-objects = uart.o
+objects = uart.o rtc.o
 
 .PHONY: clean indent
 .SILENT: help
