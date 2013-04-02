@@ -22,6 +22,8 @@
 #ifndef _UART_H_
 #define _UART_H_
 
+#include <stdint.h>
+
 /*! UART 0 baud rate */
 #define UART_BAUD_0 9600
 /*! UART 1 baud rate */

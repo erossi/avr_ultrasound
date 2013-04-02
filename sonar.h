@@ -15,21 +15,33 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
-/*! \file rtc.h
-  \brief low level clock.
- */
+#ifndef SONAR_H
+#define SONAR_H
 
-#ifndef RTC_H
-#define RTC_H
+#define TRIGGER_POUT PB0
+#define TRIGGER_PORT PORTB
+#define TRIGGER_DDR DDRB
 
-/*!
- * Global used in interrupt.
- */
-volatile unsigned long rtc_us;
+#define ECHO_PORT_IN PINC
+#define ECHO_PIN0 PINC0
+#define ECHO_PIN1 PINC1
+#define ECHO_PIN2 PINC2
+#define ECHO_PIN3 PINC3
+#define ECHO_PIN4 PINC4
+#define ECHO_PIN5 PINC5
 
-void rtc_setup(void);
-void rtc_start(void);
-void rtc_stop(void);
-void rtc_clear(void);
+#define SCALEuS 10
+
+#include "uart.h"
+#include "rtc.h"
+
+uint16_t sonar[6];
+uint8_t sonar_start_flag;
+
+void sonar_init(void);
+void sonar_trigger(void);
+void sonar_clear(void);
+void sonar_set(void);
+void sonar_print(char *string);
 
 #endif

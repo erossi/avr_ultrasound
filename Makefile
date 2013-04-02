@@ -13,7 +13,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-PRG_NAME = tzunami
+PRG_NAME = ultrasound
 MCU = atmega328p
 OPTLEV = s
 FCPU = 16000000UL
@@ -26,18 +26,24 @@ LFLAGS = -lm
 PRGNAME = $(PRG_NAME)
 GIT_TAG = "Unknown"
 # Uncomment if git tag is in use
-#GIT_TAG = "$(shell git describe --tags)"
-#PRGNAME = $(PRG_NAME)_$(GIT_TAG)_$(MCU)
+GIT_TAG = "$(shell git describe --tags)"
+PRGNAME = $(PRG_NAME)_$(GIT_TAG)_$(MCU)
 
 AR = avr-ar
 CC = avr-gcc
 
+# Arduino
 DUDEAPORT = /dev/ttyACM0
 DUDEADEV = arduino
+
+# Stk500v2
 DUDESPORT = /dev/ttyUSB0
 DUDESDEV = stk500v2
+
+# avrispmkII
 DUDEUPORT = usb
 DUDEUDEV = avrispmkII
+
 # Use sudo for USB avrispmkII
 DUDE = sudo avrdude -p $(MCU) -e -U flash:w:$(PRGNAME).hex
 
@@ -47,7 +53,7 @@ SIZE = avr-size --format=avr --mcu=$(MCU) $(PRGNAME).elf
 
 REMOVE = rm -f
 
-objects = uart.o rtc.o
+objects = uart.o rtc.o sonar.o
 
 .PHONY: clean indent
 .SILENT: help
