@@ -16,14 +16,32 @@
  */
 
 /*! \file rtc.h
-  \brief low level clock.
+ * \brief low level clock.
+ *
+ * These functions will setup a global clock
+ * based on hardware counter. The counter will start counting
+ * at some CPU Frequency speed divided by the prescaler.
+ * When it reach the CTC_MAX value the interrupt routine is called
+ * incrementing the global rtc_us counter.
+ *
+ * FCPU/prescaler / CTC_MAX
+ * 
+ * where in the Arduino example we can have:
+ *
+ * 16000000/8 / 20 = 100000 (10uS)
+ *
+ * meaning the rtc_us will be incremented every 10uS
  */
 
 #ifndef RTC_H
 #define RTC_H
 
+/*! The max value of the internal counter. */
+#define CTC_MAX 20
+
 /*!
- * Global used in interrupt.
+ * Global counter used in interrupt.
+ * see prescaler setup for details.
  */
 volatile unsigned long rtc_us;
 

@@ -30,7 +30,7 @@ int main(void)
 	/* Start the serial port. */
 	string = malloc(20);
 	uart_init(0);
-	uart_printstr(0, "Hello World!\n");
+	uart_printstr(0, "\n\nConnected!\n");
 	rtc_start();
 
 	while (1) {

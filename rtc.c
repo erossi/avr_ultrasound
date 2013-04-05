@@ -27,39 +27,72 @@
 #include "rtc.h"
 
 /*!
-  IRQ wakes up on the timer oveflow and increment the global micro seconds.
+ * IRQ wakes up on the timer oveflow and increment the global
+ * micro seconds.
  */
 ISR(TIMER0_COMPA_vect)
 {
 	rtc_us++;
 }
 
+/*! Zeroing the global counter.
+ */
 void rtc_clear(void)
 {
 	rtc_us=0;
 }
 
-/*! setup timer/counter. */
+/*!
+ * Setup timer/counter.
+ *
+ * We use the CTC (Clear Timer on Compare match) mode in which
+ * the counter will be compared to the OCR0A value and if they
+ * match an interrupt will be raised. The interrupt routine
+ * TIMER0_COMPA_vect will be called and the counter will
+ * restart from the BOTTOM.
+ *
+ * \bug The global interrupt enable should be something
+ * done by the main program, other routine my need to
+ * initialize IRQ routines before enable the global IRQ.
+ */
 void rtc_setup(void)
 {
+	/* CTC counter mode */
 	TCCR0A = _BV(WGM01);
 	TCCR0B = 0;
-	OCR0A = 20;
 
-	/*! enable interrupt on timer overflow */
+	/* Set the CTC MAX value. */
+	OCR0A = CTC_MAX;
+
+	/* Enable interrupt on timer compare match */
 	TIMSK0 = _BV(OCIE0A);
+
+	/* clear the rtc_us value. */
 	rtc_clear();
+
+	/* enable interrupt. */
 	sei();
 }
 
-/*! setup prescaler to scale to 1 sec counter and start counter. */
+/*!
+ * Setup prescaler and start counter.
+ */
 void rtc_start(void)
 {
-	/*! counter prescaler 1024 */
+	/* start counter prescaled by 8 */
         TCCR0B = _BV(CS01);
 }
 
-/*! stop the counter. */
+/*!
+ * Stop the counter.
+ *
+ * Disable the interrupt and remove the link
+ * to the interrupt routine.
+ *
+ * \bug The interrupt can be required enable by
+ * other part of the program.
+ * It shouldn't be totally disabled here.
+ */
 void rtc_stop(void)
 {
 	cli();
