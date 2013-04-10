@@ -73,7 +73,10 @@ void uart_putchar(const uint8_t port, const char c)
  */
 void uart_printstr(const uint8_t port, const char *s)
 {
+	while (*s) {
+		if (*s == '\n')
+			uart_putchar (0, '\r');
 
-  while (*s)
-      uart_putchar(port, *s++);
+		uart_putchar(port, *s++);
+	}
 }
