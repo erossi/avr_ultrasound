@@ -23,12 +23,14 @@
 int main(void)
 {
 	char *string;
+	uint16_t counter;
 
 	sonar_init();
 	rtc_setup();
 
 	/* Start the serial port. */
 	string = malloc(20);
+	counter = 0;
 	uart_init(0);
 	uart_printstr(0, "\n\nConnected!\n");
 	rtc_start();
@@ -52,6 +54,10 @@ int main(void)
 		 * dist (cm) = T (uS) / 29 /2.
 		 *
 		 */
+		string = utoa(counter, string, 10);
+		uart_printstr(0, string);
+		uart_printstr(0, " ");
+		counter++;
 		sonar_print(string);
 
 		if (rtc_us > 10000)
