@@ -23,20 +23,25 @@
 #define TRIGGER_DDR DDRB
 
 #define ECHO_PORT_IN PINC
+#define ECHO_PORT_IN2 PIND
 #define ECHO_PIN0 PINC0
 #define ECHO_PIN1 PINC1
 #define ECHO_PIN2 PINC2
 #define ECHO_PIN3 PINC3
 #define ECHO_PIN4 PINC4
 #define ECHO_PIN5 PINC5
+#define ECHO_PIN6 PIND4
+#define ECHO_PIN7 PIND5
+#define ECHO_PIN8 PIND6
+#define ECHO_PIN9 PIND7
 
 #define SCALEuS 10
 
 #include "uart.h"
 #include "rtc.h"
 
-uint16_t sonar[6];
-uint8_t sonar_start_flag;
+uint16_t sonar[10];
+uint16_t sonar_start_flag;
 
 void sonar_init(void);
 void sonar_trigger(void);

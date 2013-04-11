@@ -41,7 +41,7 @@ void sonar_clear(void)
 
 	sonar_start_flag = 0;
 
-	for (i=0; i<6; i++)
+	for (i=0; i<10; i++)
 		sonar[i] = 0;
 }
 
@@ -94,13 +94,47 @@ void sonar_set(void)
 		if (bit_is_set(ECHO_PORT_IN, ECHO_PIN5))
 			sonar[5] = rtc_us;
 	}
+
+	/* Second port */
+	if (sonar_start_flag & _BV(6)) {
+		if (bit_is_clear(ECHO_PORT_IN2, ECHO_PIN6))
+			sonar[6] = rtc_us - sonar[6];
+	} else {
+		if (bit_is_set(ECHO_PORT_IN2, ECHO_PIN6))
+			sonar[6] = rtc_us;
+	}
+
+	if (sonar_start_flag & _BV(7)) {
+		if (bit_is_clear(ECHO_PORT_IN2, ECHO_PIN7))
+			sonar[7] = rtc_us - sonar[7];
+	} else {
+		if (bit_is_set(ECHO_PORT_IN2, ECHO_PIN7))
+			sonar[7] = rtc_us;
+	}
+
+	if (sonar_start_flag & _BV(8)) {
+		if (bit_is_clear(ECHO_PORT_IN2, ECHO_PIN8))
+			sonar[8] = rtc_us - sonar[8];
+	} else {
+		if (bit_is_set(ECHO_PORT_IN2, ECHO_PIN8))
+			sonar[8] = rtc_us;
+	}
+
+	if (sonar_start_flag & _BV(9)) {
+		if (bit_is_clear(ECHO_PORT_IN2, ECHO_PIN9))
+			sonar[9] = rtc_us - sonar[9];
+	} else {
+		if (bit_is_set(ECHO_PORT_IN2, ECHO_PIN9))
+			sonar[9] = rtc_us;
+	}
+
 }
 
 void sonar_print(char *string)
 {
 	uint8_t i;
 
-	for (i=0; i<6; i++) {
+	for (i=0; i<10; i++) {
 		string = utoa(sonar[i], string, 10);
 		uart_printstr(0, string);
 		uart_printstr(0, " ");
