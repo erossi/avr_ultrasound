@@ -28,7 +28,7 @@
  * 
  * where in the Arduino example we can have:
  *
- * 16000000/8 / 20 = 100000 (10uS)
+ * 16000000 hz/8 / 20 = 100000 (10uS)
  *
  * meaning the rtc_us will be incremented every 10uS
  */

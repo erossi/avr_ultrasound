@@ -24,7 +24,7 @@ int main(void)
 {
 	char *string;
 	uint16_t counter;
-	uint8_t i;
+	/* uint8_t i; */ /* used fot test */
 
 	sonar_init();
 	rtc_setup();
@@ -37,9 +37,15 @@ int main(void)
 	rtc_start();
 
 	while (1) {
+		/* send the trigger */
 		sonar_trigger();
+		/* clear all the data */
 		sonar_clear();
 
+		/*
+		 * Wait 40mS maximum and collect all the
+		 * data during the period.
+		 */
 		while (rtc_us < 4000)
 			sonar_set();
 
@@ -53,7 +59,6 @@ int main(void)
 		 * The simplyfied formula in cm.
 		 * 340 mm/msec = 34cm/msec = 0.029 msec/cm = 29 uS/cm
 		 * dist (cm) = T (uS) / 29 /2.
-		 *
 		 */
 
 		string = utoa(counter, string, 10);
@@ -73,11 +78,16 @@ int main(void)
 		uart_printstr(0, "\n");
 		*/
 
+		/* if the counter has already reach 50mS,
+		 * then we are out of time.
+		 */
 		if (rtc_us > 5000)
 			uart_printstr(0, "Warning! Time overrun.\n");
 
-		while (rtc_us < 10000);
+		/* Wait up to 50mS before restart */
+		while (rtc_us < 5000);
 
+		/* Restart the counter */
 		rtc_clear();
 	}
 
