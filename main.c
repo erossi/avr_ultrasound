@@ -24,6 +24,7 @@ int main(void)
 {
 	char *string;
 	uint16_t counter;
+	uint8_t i;
 
 	sonar_init();
 	rtc_setup();
@@ -39,7 +40,7 @@ int main(void)
 		sonar_trigger();
 		sonar_clear();
 
-		while (rtc_us < 6000)
+		while (rtc_us < 4000)
 			sonar_set();
 
 		/*
@@ -54,13 +55,25 @@ int main(void)
 		 * dist (cm) = T (uS) / 29 /2.
 		 *
 		 */
+
 		string = utoa(counter, string, 10);
 		uart_printstr(0, string);
 		uart_printstr(0, " ");
 		counter++;
 		sonar_print(string);
 
-		if (rtc_us > 10000)
+		/* test to saturate the serial output line */
+		/*
+		for (i=0; i<11; i++) {
+			string = utoa(12345, string, 10);
+			uart_printstr(0, string);
+			uart_printstr(0, " ");
+		}
+
+		uart_printstr(0, "\n");
+		*/
+
+		if (rtc_us > 5000)
 			uart_printstr(0, "Warning! Time overrun.\n");
 
 		while (rtc_us < 10000);
