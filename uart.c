@@ -22,14 +22,8 @@
 /*! Init the uart port. */
 void uart_init(const uint8_t port)
 {
-	/* improve baud rate error by using 2x clk */
-#if F_CPU < 2000000UL && defined(U2X0)
-	UCSR0A = _BV(U2X0);
-	UBRR0L = (F_CPU / (8UL * UART_BAUD_0)) - 1;
-#else
-	UBRR0L = (F_CPU / (16UL * UART_BAUD_0)) - 1;
-#endif
-
+	/* Fixed 115200 bps value */
+	UBRR0L = 8;
 	/*! tx/rx enable */
 	UCSR0B = _BV(TXEN0) | _BV(RXEN0);
 	/* 8n2 */
