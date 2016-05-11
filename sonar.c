@@ -1,4 +1,4 @@
-/* Copyright (C) 2013 Enrico Rossi
+/* Copyright (C) 2013, 2016 Enrico Rossi
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -51,48 +51,60 @@ void sonar_set(void)
 		if (bit_is_clear(ECHO_PORT_IN, ECHO_PIN0))
 			sonar[0] = rtc_us - sonar[0];
 	} else {
-		if (bit_is_set(ECHO_PORT_IN, ECHO_PIN0))
+		if (bit_is_set(ECHO_PORT_IN, ECHO_PIN0)) {
 			sonar[0] = rtc_us;
+			sonar_start_flag |= _BV(0);
+		}
 	}
 
 	if (sonar_start_flag & _BV(1)) {
 		if (bit_is_clear(ECHO_PORT_IN, ECHO_PIN1))
 			sonar[1] = rtc_us - sonar[1];
 	} else {
-		if (bit_is_set(ECHO_PORT_IN, ECHO_PIN1))
+		if (bit_is_set(ECHO_PORT_IN, ECHO_PIN1)) {
 			sonar[1] = rtc_us;
+			sonar_start_flag |= _BV(1);
+		}
 	}
 
 	if (sonar_start_flag & _BV(2)) {
 		if (bit_is_clear(ECHO_PORT_IN, ECHO_PIN2))
 			sonar[2] = rtc_us - sonar[2];
 	} else {
-		if (bit_is_set(ECHO_PORT_IN, ECHO_PIN2))
+		if (bit_is_set(ECHO_PORT_IN, ECHO_PIN2)) {
 			sonar[2] = rtc_us;
+			sonar_start_flag |= _BV(2);
+		}
 	}
 
 	if (sonar_start_flag & _BV(3)) {
 		if (bit_is_clear(ECHO_PORT_IN, ECHO_PIN3))
 			sonar[3] = rtc_us - sonar[3];
 	} else {
-		if (bit_is_set(ECHO_PORT_IN, ECHO_PIN3))
+		if (bit_is_set(ECHO_PORT_IN, ECHO_PIN3)) {
 			sonar[3] = rtc_us;
+			sonar_start_flag |= _BV(3);
+		}
 	}
 
 	if (sonar_start_flag & _BV(4)) {
 		if (bit_is_clear(ECHO_PORT_IN, ECHO_PIN4))
 			sonar[4] = rtc_us - sonar[4];
 	} else {
-		if (bit_is_set(ECHO_PORT_IN, ECHO_PIN4))
+		if (bit_is_set(ECHO_PORT_IN, ECHO_PIN4)) {
 			sonar[4] = rtc_us;
+			sonar_start_flag |= _BV(4);
+		}
 	}
 
 	if (sonar_start_flag & _BV(5)) {
 		if (bit_is_clear(ECHO_PORT_IN, ECHO_PIN5))
 			sonar[5] = rtc_us - sonar[5];
 	} else {
-		if (bit_is_set(ECHO_PORT_IN, ECHO_PIN5))
+		if (bit_is_set(ECHO_PORT_IN, ECHO_PIN5)) {
 			sonar[5] = rtc_us;
+			sonar_start_flag |= _BV(5);
+		}
 	}
 
 	/* Second port */
@@ -100,34 +112,41 @@ void sonar_set(void)
 		if (bit_is_clear(ECHO_PORT_IN2, ECHO_PIN6))
 			sonar[6] = rtc_us - sonar[6];
 	} else {
-		if (bit_is_set(ECHO_PORT_IN2, ECHO_PIN6))
+		if (bit_is_set(ECHO_PORT_IN2, ECHO_PIN6)) {
 			sonar[6] = rtc_us;
+			sonar_start_flag |= _BV(6);
+		}
 	}
 
 	if (sonar_start_flag & _BV(7)) {
 		if (bit_is_clear(ECHO_PORT_IN2, ECHO_PIN7))
 			sonar[7] = rtc_us - sonar[7];
 	} else {
-		if (bit_is_set(ECHO_PORT_IN2, ECHO_PIN7))
+		if (bit_is_set(ECHO_PORT_IN2, ECHO_PIN7)) {
 			sonar[7] = rtc_us;
+			sonar_start_flag |= _BV(7);
+		}
 	}
 
 	if (sonar_start_flag & _BV(8)) {
 		if (bit_is_clear(ECHO_PORT_IN2, ECHO_PIN8))
 			sonar[8] = rtc_us - sonar[8];
 	} else {
-		if (bit_is_set(ECHO_PORT_IN2, ECHO_PIN8))
+		if (bit_is_set(ECHO_PORT_IN2, ECHO_PIN8)) {
 			sonar[8] = rtc_us;
+			sonar_start_flag |= _BV(8);
+		}
 	}
 
 	if (sonar_start_flag & _BV(9)) {
 		if (bit_is_clear(ECHO_PORT_IN2, ECHO_PIN9))
 			sonar[9] = rtc_us - sonar[9];
 	} else {
-		if (bit_is_set(ECHO_PORT_IN2, ECHO_PIN9))
+		if (bit_is_set(ECHO_PORT_IN2, ECHO_PIN9)) {
 			sonar[9] = rtc_us;
+			sonar_start_flag |= _BV(9);
+		}
 	}
-
 }
 
 void sonar_print(char *string)
