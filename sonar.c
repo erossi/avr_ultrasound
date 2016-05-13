@@ -148,16 +148,3 @@ void sonar_set(void)
 		}
 	}
 }
-
-void sonar_print(char *string)
-{
-	uint8_t i;
-
-	for (i=0; i<10; i++) {
-		string = utoa(sonar[i], string, 10);
-		uart_printstr(0, string);
-		uart_printstr(0, " ");
-	}
-
-	uart_printstr(0, "\n");
-}

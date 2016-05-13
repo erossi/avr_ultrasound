@@ -1,4 +1,4 @@
-/* Copyright (C) 2013 Enrico Rossi
+/* Copyright (C) 2013, 2016 Enrico Rossi
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -16,24 +16,39 @@
  */
 
 #include <stdlib.h>
-#include "uart.h"
+#include <string.h>
+#include <avr/pgmspace.h>
+#include "usart.h"
 #include "rtc.h"
 #include "sonar.h"
 
+void sonar_print(void)
+{
+	uint8_t i;
+
+	for (i=0; i<10; i++) {
+		usart->tx0_buffer = utoa(sonar[i], usart->tx0_buffer, 10);
+		usart_printstr(0, NULL);
+		usart_printstr(0, " ");
+	}
+
+	usart_printstr(0, "\n");
+}
+
 int main(void)
 {
-	char *string;
 	uint16_t counter;
-	/* uint8_t i; */ /* used fot test */
 
+	usart_init();
 	sonar_init();
 	rtc_setup();
 
-	/* Start the serial port. */
-	string = malloc(20);
 	counter = 0;
-	uart_init(0);
-	uart_printstr(0, "\n\nConnected!\n");
+	usart_resume(0);
+	strcpy_P(usart->tx0_buffer, PSTR("\nTsunami Simulator "));
+	strcat_P(usart->tx0_buffer, PSTR(GITREL));
+	strcat_P(usart->tx0_buffer, PSTR("\n\nConnected!\n"));
+	usart_printstr(0, NULL);
 	rtc_start();
 
 	while (1) {
@@ -61,28 +76,31 @@ int main(void)
 		 * dist (cm) = T (uS) / 29 /2.
 		 */
 
-		string = utoa(counter, string, 10);
-		uart_printstr(0, string);
-		uart_printstr(0, " ");
+		usart->tx0_buffer = utoa(counter, usart->tx0_buffer, 10);
+		usart_printstr(0, NULL);
+		usart_printstr(0, " ");
 		counter++;
-		sonar_print(string);
+		sonar_print();
 
-		/* test to saturate the serial output line */
-		/*
+		/* test to saturate the serial output line
+		 *
+		 * In order to test if the print takes too long, substitute
+		 * the sonar_print() above with:
+
 		for (i=0; i<11; i++) {
-			string = utoa(12345, string, 10);
-			uart_printstr(0, string);
-			uart_printstr(0, " ");
+			usart->tx0_buffer = utoa(12345, usart->tx0_buffer, 10);
+			usart_printstr(0, string);
+			usart_printstr(0, " ");
 		}
 
-		uart_printstr(0, "\n");
+		usart_printstr(0, "\n");
 		*/
 
 		/* if the counter has already reach 50mS,
-		 * then we are out of time.
+		 * then this cycle takes too long.
 		 */
 		if (rtc_us > 5000)
-			uart_printstr(0, "Warning! Time overrun.\n");
+			usart_printstr(0, "Warning! Time overrun.\n");
 
 		/* Wait up to 50mS before restart */
 		while (rtc_us < 5000);

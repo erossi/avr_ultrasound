@@ -40,9 +40,10 @@
 
 #define SCALEuS 10
 
-#include "uart.h"
 #include "rtc.h"
 
+/*! Globals
+ */
 uint16_t sonar[10];
 uint16_t sonar_start_flag;
 
@@ -50,6 +51,5 @@ void sonar_init(void);
 void sonar_trigger(void);
 void sonar_clear(void);
 void sonar_set(void);
-void sonar_print(char *string);
 
 #endif

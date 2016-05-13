@@ -1,4 +1,4 @@
-# Copyright (C) 2013 Enrico Rossi
+# Copyright (C) 2013, 2016 Enrico Rossi
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -13,21 +13,24 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-PRG_NAME = ultrasound
-MCU = atmega328p
+PRG_NAME = tsunami_simulator
 OPTLEV = s
+
+## Microcontroller definition
+#
+MCU = atmega328p
 FCPU = 16000000UL
+
 PWD = $(shell pwd)
 INC = -I/usr/lib/avr/include/
 
 CFLAGS = $(INC) -Wall -Wstrict-prototypes -pedantic -mmcu=$(MCU) -O$(OPTLEV) -D F_CPU=$(FCPU)
 LFLAGS = -lm
 
-PRGNAME = $(PRG_NAME)
-GIT_TAG = "Unknown"
-# Uncomment if git tag is in use
-GIT_TAG = "$(shell git describe --tags)"
+# Uncomment if git is in use
+GIT_TAG = "$(shell git describe --tags --long --always)"
 PRGNAME = $(PRG_NAME)_$(GIT_TAG)_$(MCU)
+ELFNAME = $(PRGNAME)_$@
 
 AR = avr-ar
 CC = avr-gcc
@@ -53,33 +56,34 @@ SIZE = avr-size --format=avr --mcu=$(MCU) $(PRGNAME).elf
 
 REMOVE = rm -f
 
-objects = uart.o rtc.o sonar.o
+usart_obj = circular_buffer.o usart.o
+usart_norfid_obj = circular_buffer.o usart_norfid.o
 
-.PHONY: clean indent
+all_obj = $(usart_obj) rtc.o sonar.o
+
+## expand CFLAGS
+#
+CFLAGS += -D USE_ARDUINO -D GITREL=\"$(GIT_TAG)\"
+
+.PHONY: clean
 .SILENT: help
 .SUFFIXES: .c, .o
 
-# Export variables used in sub-make
+## Export variables used in sub-make
+#
 .EXPORT_ALL_VARIABLES: doc
 
-all: $(objects)
-	$(CC) $(CFLAGS) -o $(PRGNAME).elf main.c $(objects) $(LFLAGS)
-	$(OBJCOPY) $(PRGNAME).elf $(PRGNAME).hex
-
-debug.o:
-	$(CC) $(CFLAGS) -D GITREL=\"$(GIT_TAG)\" -c debug.c
-
-programardu:
-	$(DUDE) -c $(DUDEADEV) -P $(DUDEAPORT)
-
-programstk:
-	$(DUDE) -c $(DUDESDEV) -P $(DUDESPORT)
+## Default
+#
+all: $(all_obj)
+	$(CC) $(CFLAGS) -o $(ELFNAME).elf main.c $(all_obj) $(LFLAGS)
+	$(OBJCOPY) $(ELFNAME).elf $(PRGNAME).hex
 
 program:
-	$(DUDE) -c $(DUDEUDEV) -P $(DUDEUPORT)
+	$(DUDE) -c $(DUDEADEV) -P $(DUDEAPORT)
 
 clean:
-	$(REMOVE) *.elf *.hex $(objects)
+	$(REMOVE) *.elf *.hex $(all_obj)
 
 version:
 	# Last Git tag: $(GIT_TAG)
