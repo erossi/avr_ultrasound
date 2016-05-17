@@ -119,6 +119,8 @@ void usart_resume(const uint8_t port)
 		UBRR0L = (F_CPU / (8UL * USART0_BAUD)) - 1;
 #else
 		UBRR0L = (F_CPU / (16UL * USART0_BAUD)) - 1;
+		/* Force 115200 bps on arduino */
+		UBRR0L = 0x08;
 #endif
 
 		/*! tx/rxI enable, 8n1 */
