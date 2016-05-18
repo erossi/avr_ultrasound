@@ -22,14 +22,23 @@
 #ifndef CBUFFER_H
 #define CBUFFER_H
 
-#define CBUF_SIZE 255
+/*! The size of the buffer */
+#ifndef CBUF_SIZE
+#define CBUF_SIZE 20
+#endif
+
+/*!
+ * The char that replace every char read.
+ *
+ * Usefull to show which part of the circular buffer has been
+ * read.
+ */
 #define CBUF_OVR_CHAR 'x'
 
 /* to force message_get to terminate an unterminated message
  * due to end of buffer reached, then
  * #define CBUF_SAFE_EOM
- * here or during the compilation time.
- * \note the message buffer must the be all allocated.
+ * or add "-D CBUF_SAFE_EOM" at compile time.
  */
 
 #ifndef TRUE
