@@ -38,6 +38,8 @@ void sonar_print(void)
 int main(void)
 {
 	uint16_t counter;
+	char c;
+	uint8_t stop = TRUE;
 
 	usart_init();
 	sonar_init();
@@ -52,6 +54,28 @@ int main(void)
 	rtc_start();
 
 	while (1) {
+		/* Restart the counter */
+		rtc_clear();
+		c = usart_getchar(0, FALSE);
+
+		switch (c) {
+			case '0':
+				stop = TRUE;
+				break;
+			case '1':
+				stop = FALSE;
+				break;
+			default:
+				break;
+		}
+
+		if (stop) {
+			/* stop the code */
+			while(usart_getchar(0, FALSE) != '1');
+			stop = FALSE;
+			rtc_clear();
+		}
+
 		/* send the trigger */
 		sonar_trigger();
 		/* clear all the data */
@@ -82,20 +106,6 @@ int main(void)
 		counter++;
 		sonar_print();
 
-		/* test to saturate the serial output line
-		 *
-		 * In order to test if the print takes too long, substitute
-		 * the sonar_print() above with:
-
-		for (i=0; i<11; i++) {
-			usart->tx0_buffer = utoa(12345, usart->tx0_buffer, 10);
-			usart_printstr(0, string);
-			usart_printstr(0, " ");
-		}
-
-		usart_printstr(0, "\n");
-		*/
-
 		/* if the counter has already reach 50mS,
 		 * then this cycle takes too long.
 		 */
@@ -104,9 +114,6 @@ int main(void)
 
 		/* Wait up to 50mS before restart */
 		while (rtc_us < 5000);
-
-		/* Restart the counter */
-		rtc_clear();
 	}
 
 	return(0);
