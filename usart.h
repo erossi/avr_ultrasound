@@ -40,21 +40,14 @@
 #define USART0_RXBUF_SIZE CBUF_SIZE
 #define USART1_RXBUF_SIZE CBUF_SIZE
 
-/*! USART 0 baud rate */
+/*! USART 0 */
 #define USART0_BAUD 115200
-/*! IO Buffers and masks */
 #define USART0_TXBUF_SIZE 64
-/*! IO Buffers and masks */
-#define USART0_TXBUF_MASK ( USART0_TXBUF_SIZE - 1 )
 
 /*! if the second serial port is in use */
 #ifdef USE_USART1
-/*! USART 1 baud rate */
 #define USART1_BAUD 9600
-/*! IO Buffers and masks */
 #define USART1_TXBUF_SIZE 64
-/*! IO Buffers and masks */
-#define USART1_TXBUF_MASK ( USART1_TXBUF_SIZE - 1 )
 #endif
 
 #ifndef CR

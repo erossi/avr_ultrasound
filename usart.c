@@ -71,6 +71,20 @@ ISR(USART1_RX_vect)
 
 /*! Start the usart port.
  *
+ * See datasheet for more info, generally it is better to put fixed
+ * parameter from the datasheet instead of calculating it.
+ *
+ * if it is possible to improve baud rate error by using 2x clk
+
+#if defined(U2X0)
+	UCSR0A = _BV(U2X0);
+	UBRR0H = (uint8_t)((F_CPU / 8UL / USART0_BAUD - 1) >> 8);
+	UBRR0L = (uint8_t)(F_CPU / 8UL / USART0_BAUD - 1);
+#else
+	UBRR0H = (uint8_t)((F_CPU / 16UL / USART0_BAUD - 1) >> 8);
+	UBRR0L = (uint8_t)(F_CPU / 16UL / USART0_BAUD - 1);
+#endif
+
  * example of initializations
  * Tx only without Rx
  * UCSR0B = _BV(TXEN0);
@@ -84,7 +98,6 @@ ISR(USART1_RX_vect)
  * UCSR0B = _BV(RXCIE0) | _BV(RXEN0) | _BV(TXCIE0) | _BV(TXEN0);
  *
  * \parameters port the serial port number.
- * \bug port should be used with multiport.
  */
 void usart_resume(const uint8_t port)
 {
@@ -95,13 +108,10 @@ void usart_resume(const uint8_t port)
 		usart->tx1Idx = 0;
 		usart->tx1_buffer[0] = 0;
 
-		/* improve baud rate error by using 2x clk */
-#if F_CPU < 2000000UL && defined(U2X1)
+		/*! 115200 bps */
 		UCSR1A = _BV(U2X1);
-		UBRR1L = (F_CPU / (8UL * USART1_BAUD)) - 1;
-#else
-		UBRR1L = (F_CPU / (16UL * USART1_BAUD)) - 1;
-#endif
+		UBRR1H = 0;
+		UBRR1L = 16;
 
 		/*! tx/rxI enable, 8n1 */
 		UCSR1C = _BV(UCSZ10) | _BV(UCSZ11);
@@ -113,19 +123,13 @@ void usart_resume(const uint8_t port)
 		usart->tx0Idx = 0;
 		usart->tx0_buffer[0] = 0;
 
-		/* improve baud rate error by using 2x clk */
-#if F_CPU < 2000000UL && defined(U2X0)
+		/*! 115200 bps */
 		UCSR0A = _BV(U2X0);
-		UBRR0L = (F_CPU / (8UL * USART0_BAUD)) - 1;
-#else
-		UBRR0L = (F_CPU / (16UL * USART0_BAUD)) - 1;
-		/* Force 115200 bps on arduino */
-		UBRR0L = 0x08;
-#endif
-
+		UBRR0H = 0;
+		UBRR0L = 16;
 		/*! tx/rxI enable, 8n1 */
 		UCSR0C = _BV(UCSZ00) | _BV(UCSZ01);
-		UCSR0B = _BV(RXCIE0) | _BV(RXEN0) | _BV(TXEN0);
+		UCSR0B = _BV(RXEN0) | _BV(TXEN0);
 	}
 }
 
@@ -175,7 +179,7 @@ void usart_init(void)
 	usart->tx0_buffer = malloc(USART0_TXBUF_SIZE);
 }
 
-/*! Get a char from the usart port. */
+/*! Get a char directly from the usart port. */
 char usart_getchar(const uint8_t port, const uint8_t locked)
 {
 #ifdef USE_USART1
@@ -228,11 +232,10 @@ void usart_clear_rx_buffer(const uint8_t port)
 
 /*! get the message from the RX buffer (legacy).
  *
+ * See usart_getnmsg() for info.
+ *
  * \param port the serial port.
  * \param s the string to copy the message to.
- * \warning Make sure that s have enough space, max USARTn_RXBUF_SIZE.
- * \bug this function should be atomic, cannot be interrupted
- * while resetting the pointer.
  */
 uint8_t usart_getmsg(const uint8_t port, char *s)
 {
